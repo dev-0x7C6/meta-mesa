@@ -13,6 +13,14 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://docs/license.html;md5=c1843d93c460bbf778d6037ce324f9f7"
 
 PE = "2"
+PR = "r100"
+
+OVERRIDES_append_aarch64 = ":armarch:arm64:64bit"
+OVERRIDES_append_aarch64_be = ":armarch:arm64:64bit"
+OVERRIDES_append_arm = ":armarch:arm32:32bit"
+OVERRIDES_append_armeb = ":armarch:arm32:32bit"
+OVERRIDES_append_x86 = ":x86arch:32bit"
+OVERRIDES_append_x86-64 = ":x86arch:64bit"
 
 DEPENDS = "expat makedepend-native flex-native bison-native libxml2-native zlib chrpath-replacement-native python3-mako-native gettext-native"
 EXTRANATIVEPATH += "chrpath-native"
@@ -98,8 +106,10 @@ PACKAGECONFIG[dri3] = "-Ddri3=true, -Ddri3=false, xorgproto libxshmfence"
 # Vulkan drivers need dri3 enabled
 # radeon could be enabled as well but requires gallium-llvm with llvm >= 3.9
 VULKAN_DRIVERS = ""
-VULKAN_DRIVERS_append_x86_class-target = ",intel"
-VULKAN_DRIVERS_append_x86-64_class-target = ",intel"
+
+VULKAN_DRIVERS_append_armarch_class-target = ",freedreno"
+VULKAN_DRIVERS_append_x86_class-target = ",intel,amd"
+VULKAN_DRIVERS_append_x86-64_class-target = ",intel,amd"
 PACKAGECONFIG[vulkan] = "-Dvulkan-drivers=${VULKAN_DRIVERS}, -Dvulkan-drivers='',"
 
 PACKAGECONFIG[opengl] = "-Dopengl=true, -Dopengl=false"
