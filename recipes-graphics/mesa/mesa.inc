@@ -80,7 +80,6 @@ PACKAGECONFIG_class-target ??= "${@bb.utils.filter('DISTRO_FEATURES', 'wayland v
                    ${@bb.utils.contains('DISTRO_FEATURES', 'x11 opengl', 'x11 dri3', '', d)} \
                    ${@bb.utils.contains('DISTRO_FEATURES', 'x11 vulkan', 'dri3', '', d)} \
                    elf-tls \
-                   lto \
 		   "
 PACKAGECONFIG_class-native ?= "gbm dri egl opengl elf-tls"
 PACKAGECONFIG_class-nativesdk ?= "gbm dri egl opengl elf-tls"
