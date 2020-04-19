@@ -75,12 +75,19 @@ EXTRA_OEMESON = " \
     -Dplatforms='${@",".join("${PLATFORMS}".split())}' \
 "
 
-PACKAGECONFIG_class-target ??= "${@bb.utils.filter('DISTRO_FEATURES', 'wayland vulkan', d)} \
-                   ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'opengl egl gles gbm dri gallium', '', d)} \
-                   ${@bb.utils.contains('DISTRO_FEATURES', 'x11 opengl', 'x11 dri3', '', d)} \
-                   ${@bb.utils.contains('DISTRO_FEATURES', 'x11 vulkan', 'dri3', '', d)} \
-                   elf-tls \
-		   "
+OVERRIDES_append = "${@bb.utils.contains_any('PACKAGECONFIG', [ 'r300', 'r600', 'radeonsi' ], ':amdgpu', '', d)}"
+OVERRIDES_append = "${@bb.utils.contains_any('PACKAGECONFIG', [ 'i915', 'iris' ], ':intelgpu', '', d)}"
+
+PACKAGECONFIG_class-target ??= " \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'opengl egl gles gbm dri gallium', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'x11 opengl', 'x11 dri3', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'x11 vulkan', 'dri3', '', d)} \
+    ${@bb.utils.filter('DISTRO_FEATURES', 'wayland vulkan', d)} \
+    elf-tls \
+"
+
+PACKAGECONFIG_append_amdgpu_class-target = " gallium gallium-llvm"
+
 PACKAGECONFIG_class-native ?= "gbm dri egl opengl elf-tls"
 PACKAGECONFIG_class-nativesdk ?= "gbm dri egl opengl elf-tls"
 
@@ -114,8 +121,9 @@ PACKAGECONFIG[dri3] = "-Ddri3=true, -Ddri3=false, xorgproto libxshmfence"
 # Vulkan drivers need dri3 enabled
 # radeon could be enabled as well but requires gallium-llvm with llvm >= 3.9
 VULKAN_DRIVERS = ""
-VULKAN_DRIVERS_append_x86_class-target = ",intel,amd"
-VULKAN_DRIVERS_append_x86-64_class-target = ",intel,amd"
+VULKAN_DRIVERS_append_amdgpu_class-target = ",amd"
+VULKAN_DRIVERS_append_intelgpu_class-target = ",intel"
+
 PACKAGECONFIG[vulkan] = "-Dvulkan-drivers=${VULKAN_DRIVERS}, -Dvulkan-drivers='',"
 
 PACKAGECONFIG[opengl] = "-Dopengl=true, -Dopengl=false"
