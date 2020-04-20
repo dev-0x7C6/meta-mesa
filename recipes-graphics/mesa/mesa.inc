@@ -76,7 +76,7 @@ EXTRA_OEMESON = " \
 "
 
 OVERRIDES_append = "${@bb.utils.contains_any('PACKAGECONFIG', [ 'r300', 'r600', 'radeonsi' ], ':amdgpu', '', d)}"
-OVERRIDES_append = "${@bb.utils.contains_any('PACKAGECONFIG', [ 'i915', 'iris' ], ':intelgpu', '', d)}"
+OVERRIDES_append_x86arch = "${@bb.utils.contains_any('PACKAGECONFIG', [ 'i915', 'iris' ], ':intelgpu', '', d)}"
 
 PACKAGECONFIG_class-target ??= " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'opengl egl gles gbm dri gallium', '', d)} \
@@ -165,8 +165,8 @@ GALLIUMDRIVERS_append = "${@bb.utils.contains('PACKAGECONFIG', 'radeonsi', ',rad
 GALLIUMDRIVERS_append = "${@bb.utils.contains('PACKAGECONFIG', 'v3d', ',v3d', '', d)}"
 GALLIUMDRIVERS_append = "${@bb.utils.contains('PACKAGECONFIG', 'vc4', ',vc4', '', d)}"
 GALLIUMDRIVERS_append = ",virgl"
-GALLIUMDRIVERS_append_x86arch = "${@bb.utils.contains('PACKAGECONFIG', 'i915', ',i915', '', d)}"
-GALLIUMDRIVERS_append_x86arch = "${@bb.utils.contains('PACKAGECONFIG', 'iris', ',iris', '', d)}"
+GALLIUMDRIVERS_append_intelgpu = "${@bb.utils.contains('PACKAGECONFIG', 'i915', ',i915', '', d)}"
+GALLIUMDRIVERS_append_intelgpu = "${@bb.utils.contains('PACKAGECONFIG', 'iris', ',iris', '', d)}"
 GALLIUMDRIVERS_remove_x86-x32 = "swrast,"
 
 
