@@ -8,8 +8,8 @@ SRC_URI = "https://mesa.freedesktop.org/archive/mesa-${PV}.tar.xz \
            file://0005-vc4-use-intmax_t-for-formatted-output-of-timespec-me.patch \
            "
 
-SRC_URI[md5sum] = "719fc1fbe8ba16ca6ddf45db19c41873"
-SRC_URI[sha256sum] = "c4ed491517a94118a7a611810eeb92645d42ffd82280dcd51be8cc2ba1aabba5"
+SRC_URI[md5sum] = "056f644959320ac552522973f10e9dcf"
+SRC_URI[sha256sum] = "2c56a82a28cc924e40ea49752abdf1d701c9952481f53cbc7a080271597f572e"
 
 UPSTREAM_CHECK_GITTAGREGEX = "mesa-(?P<pver>\d+(\.\d+)+)"
 
