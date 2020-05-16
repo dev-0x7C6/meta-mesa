@@ -32,8 +32,7 @@ PROVIDES = " \
     virtual/mesa \
     "
 
-inherit meson pkgconfig python3native gettext
-inherit ${@bb.utils.contains_any('METADATA_BRANCH', 'dunfell gatesgarth', 'features_check', 'distro_features_check', d)}
+inherit meson pkgconfig python3native gettext features_check
 
 # Unset these to stop python trying to report the target Python setup
 _PYTHON_SYSCONFIGDATA_NAME[unexport] = "1"
