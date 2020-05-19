@@ -13,7 +13,6 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://docs/license.html;md5=c1843d93c460bbf778d6037ce324f9f7"
 
 PE = "2"
-PR = "r101"
 
 OVERRIDES_append_aarch64 = ":armarch:arm64:64bit"
 OVERRIDES_append_aarch64_be = ":armarch:arm64:64bit"
