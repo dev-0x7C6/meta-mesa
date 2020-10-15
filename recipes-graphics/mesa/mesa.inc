@@ -33,6 +33,31 @@ PROVIDES = " \
 
 inherit meson pkgconfig python3native gettext features_check
 
+
+SRC_URI = "https://mesa.freedesktop.org/archive/mesa-${PV}.tar.xz \
+           file://0001-meson.build-check-for-all-linux-host_os-combinations.patch \
+           file://0002-meson.build-make-TLS-ELF-optional.patch \
+           file://0003-Allow-enable-DRI-without-DRI-drivers.patch \
+           file://0004-Revert-mesa-Enable-asm-unconditionally-now-that-gen_.patch \
+           file://0005-vc4-use-intmax_t-for-formatted-output-of-timespec-me.patch \
+           file://0001-meson-misdetects-64bit-atomics-on-mips-clang.patch \
+           "
+
+SRC_URI[sha256sum] = "b1dba69910adac9fcb4cbdfd7833d99a4a8c75b91f3d2e97f0fd0a3cd8c6ee9f"
+
+UPSTREAM_CHECK_GITTAGREGEX = "mesa-(?P<pver>\d+(\.\d+)+)"
+
+CFLAGS += "-fcommon"
+
+#because we cannot rely on the fact that all apps will use pkgconfig,
+#make eglplatform.h independent of MESA_EGL_NO_X11_HEADER
+do_install_append() {
+    if ${@bb.utils.contains('PACKAGECONFIG', 'egl', 'true', 'false', d)}; then
+        sed -i -e 's/^#elif defined(__unix__) && defined(EGL_NO_X11)$/#elif defined(__unix__) \&\& defined(EGL_NO_X11) || ${@bb.utils.contains('PACKAGECONFIG', 'x11', '0', '1', d)}/' ${D}${includedir}/EGL/eglplatform.h
+    fi
+}
+
+
 # Unset these to stop python trying to report the target Python setup
 _PYTHON_SYSCONFIGDATA_NAME[unexport] = "1"
 STAGING_INCDIR[unexport] = "1"
@@ -96,8 +121,8 @@ PACKAGECONFIG[lto] = ",,"
 
 MESA_LTO_FLAGS ?= "-flto=${@oe.utils.cpu_count()}"
 
-TARGET_CXXFLAGS += "${@bb.utils.contains('PACKAGECONFIG', 'lto', '${MESA_LTO_FLAGS}', '', d)}"
 TARGET_CFLAGS += "${@bb.utils.contains('PACKAGECONFIG', 'lto', '${MESA_LTO_FLAGS}', '', d)}"
+TARGET_LDFLAGS += "${@bb.utils.contains('PACKAGECONFIG', 'lto', '${TARGET_CFLAGS}', '', d)}"
 
 # "gbm" requires "dri", "opengl"
 PACKAGECONFIG[gbm] = "-Dgbm=true,-Dgbm=false"
