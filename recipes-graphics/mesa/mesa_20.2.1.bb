@@ -8,5 +8,23 @@ SRC_URI_append = " file://0001-make-tls-elf-more-optional-mesa-20.2.1.patch \
     file://0002-enable-dri-without-dri-drivers-mesa-20.2.1.patch \
 "
 
-VULKAN_DRIVERS = "amd"
+python() {
+    import re
+
+    def remove_comma(input):
+        list = d.getVar(input).replace(' ', '').split(",")
+        ret = ""
+        for value in list:
+            if value:
+                if ret:
+                    ret += ',' + value
+                else:
+                    ret += value
+        d.setVar(input, ret)
+
+    remove_comma('VULKAN_DRIVERS')
+    remove_comma('GALLIUMDRIVERS')
+    remove_comma('DRIDRIVERS')
+}
+
 EXTRA_OEMESON_remove = "-Dasm=false"
