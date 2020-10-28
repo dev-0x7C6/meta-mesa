@@ -10,7 +10,7 @@ HOMEPAGE = "http://mesa3d.org"
 BUGTRACKER = "https://bugs.freedesktop.org"
 SECTION = "x11"
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://docs/license.html;md5=c1843d93c460bbf778d6037ce324f9f7"
+LIC_FILES_CHKSUM = "file://docs/license.rst;md5=9aa1bc48c9826ad9fdb16661f6930496"
 
 PE = "2"
 
@@ -36,9 +36,14 @@ inherit meson pkgconfig python3native gettext features_check
 
 SRC_URI = "https://mesa.freedesktop.org/archive/mesa-${PV}.tar.xz \
            file://0001-meson.build-check-for-all-linux-host_os-combinations.patch \
+           file://0002-meson.build-make-TLS-ELF-optional.patch \
+           file://0004-Revert-mesa-Enable-asm-unconditionally-now-that-gen_.patch \
            file://0005-vc4-use-intmax_t-for-formatted-output-of-timespec-me.patch \
            file://0001-meson-misdetects-64bit-atomics-on-mips-clang.patch \
+           file://0001-futex.h-Define-__NR_futex-if-it-does-not-exist.patch \
            "
+
+SRC_URI[sha256sum] = "d1a46d9a3f291bc0e0374600bdcb59844fa3eafaa50398e472a36fc65fd0244a"
 
 UPSTREAM_CHECK_GITTAGREGEX = "mesa-(?P<pver>\d+(\.\d+)+)"
 
@@ -85,6 +90,10 @@ def check_buildtype(d):
         return 'debugoptimized'
     return 'plain'
 MESON_BUILDTYPE = "${@check_buildtype(d)}"
+
+
+def strip_comma(s):
+    return s.strip(',')
 
 EXTRA_OEMESON = " \
     -Dshared-glapi=true \
@@ -134,17 +143,17 @@ DRIDRIVERS_class-nativesdk = "swrast"
 DRIDRIVERS_append_x86_class-target = ",r100,r200,nouveau,i965"
 DRIDRIVERS_append_x86-64_class-target = ",r100,r200,nouveau,i965"
 # "dri" requires "opengl"
-PACKAGECONFIG[dri] = "-Ddri=true -Ddri-drivers=${DRIDRIVERS}, -Ddri=false -Ddri-drivers='', xorgproto libdrm"
+PACKAGECONFIG[dri] = "-Ddri-drivers=${@strip_comma('${DRIDRIVERS}')}, -Ddri-drivers='', xorgproto libdrm"
 PACKAGECONFIG[dri3] = "-Ddri3=true, -Ddri3=false, xorgproto libxshmfence"
 
 # Vulkan drivers need dri3 enabled
-# radeon could be enabled as well but requires gallium-llvm with llvm >= 3.9
+# amd could be enabled as well but requires gallium-llvm with llvm >= 3.9
 
 VULKAN_DRIVERS = ""
 VULKAN_DRIVERS_append_amdgpu_class-target = ",amd"
 VULKAN_DRIVERS_append_intelgpu_class-target = ",intel"
 
-PACKAGECONFIG[vulkan] = "-Dvulkan-drivers=${VULKAN_DRIVERS}, -Dvulkan-drivers='',"
+PACKAGECONFIG[vulkan] = "-Dvulkan-drivers=${@strip_comma('${VULKAN_DRIVERS}')}, -Dvulkan-drivers='',"
 
 PACKAGECONFIG[opengl] = "-Dopengl=true, -Dopengl=false"
 
@@ -188,7 +197,7 @@ GALLIUMDRIVERS_append_intelgpu = "${@bb.utils.contains('PACKAGECONFIG', 'iris', 
 GALLIUMDRIVERS_remove_x86-x32 = "swrast,"
 
 
-PACKAGECONFIG[gallium] = "-Dgallium-drivers=${GALLIUMDRIVERS}, -Dgallium-drivers=''"
+PACKAGECONFIG[gallium] = "-Dgallium-drivers=${@strip_comma('${GALLIUMDRIVERS}')}, -Dgallium-drivers=''"
 PACKAGECONFIG[gallium-llvm] = "-Dllvm=true -Dshared-llvm=true, -Dllvm=false, llvm${MESA_LLVM_RELEASE} llvm-native"
 PACKAGECONFIG[xa]  = "-Dgallium-xa=true, -Dgallium-xa=false"
 PACKAGECONFIG[va] = "-Dgallium-va=true,-Dgallium-va=false,libva-initial"
