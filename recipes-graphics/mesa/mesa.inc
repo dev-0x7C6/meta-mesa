@@ -40,9 +40,10 @@ SRC_URI = "git://github.com/mesa3d/mesa.git;nobranch=1 \
            file://0004-Revert-mesa-Enable-asm-unconditionally-now-that-gen_.patch \
            file://0001-meson-misdetects-64bit-atomics-on-mips-clang.patch \
            file://0001-futex.h-Define-__NR_futex-if-it-does-not-exist.patch \
+           file://0006-v3dv-VK_KHR_display-extension-support.patch \
            "
 
-VERSION = "20.3.0"
+VERSION = "20.3.1"
 SRCREV = "mesa-${VERSION}"
 PV = "${VERSION}+git${SRCPV}"
 S = "${WORKDIR}/git"
