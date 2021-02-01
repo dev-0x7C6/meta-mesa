@@ -43,7 +43,7 @@ SRC_URI = "git://github.com/mesa3d/mesa.git;nobranch=1 \
            file://0006-v3dv-VK_KHR_display-extension-support.patch \
            "
 
-VERSION = "20.3.3"
+VERSION = "20.3.4"
 SRCREV = "mesa-${VERSION}"
 PV = "${VERSION}+git${SRCPV}"
 S = "${WORKDIR}/git"
