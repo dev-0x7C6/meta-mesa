@@ -37,13 +37,11 @@ inherit meson pkgconfig python3native gettext features_check
 SRC_URI = "git://github.com/mesa3d/mesa.git;nobranch=1 \
            file://0001-meson.build-check-for-all-linux-host_os-combinations.patch \
            file://0002-meson.build-make-TLS-ELF-optional.patch \
-           file://0004-Revert-mesa-Enable-asm-unconditionally-now-that-gen_.patch \
            file://0001-meson-misdetects-64bit-atomics-on-mips-clang.patch \
            file://0001-futex.h-Define-__NR_futex-if-it-does-not-exist.patch \
-           file://0006-v3dv-VK_KHR_display-extension-support.patch \
            "
 
-VERSION = "20.3.4"
+VERSION = "21.0.0"
 SRCREV = "mesa-${VERSION}"
 PV = "${VERSION}+git${SRCPV}"
 S = "${WORKDIR}/git"
@@ -139,8 +137,8 @@ PACKAGECONFIG[elf-tls] = "-Delf-tls=true, -Delf-tls=false,elfutils"
 PACKAGECONFIG[xvmc] = "-Dgallium-xvmc=true,-Dgallium-xvmc=false,libxvmc"
 PACKAGECONFIG[wayland] = ",,wayland-native wayland libdrm wayland-protocols"
 
-DRIDRIVERS_class-native = "swrast"
-DRIDRIVERS_class-nativesdk = "swrast"
+DRIDRIVERS_class-native = "nouveau"
+DRIDRIVERS_class-nativesdk = "nouveau"
 DRIDRIVERS_append_x86_class-target = ",r100,r200,nouveau,i965"
 DRIDRIVERS_append_x86-64_class-target = ",r100,r200,nouveau,i965"
 # "dri" requires "opengl"
@@ -181,7 +179,7 @@ PACKAGECONFIG[radeonsi] = ""
 PACKAGECONFIG[v3d] = ""
 PACKAGECONFIG[vc4] = ""
 
-GALLIUMDRIVERS = "swrast"
+GALLIUMDRIVERS = ""
 GALLIUMDRIVERS_append = "${@bb.utils.contains('PACKAGECONFIG', 'etnaviv', ',etnaviv', '', d)}"
 GALLIUMDRIVERS_append = "${@bb.utils.contains('PACKAGECONFIG', 'freedreno', ',freedreno', '', d)}"
 GALLIUMDRIVERS_append = "${@bb.utils.contains('PACKAGECONFIG', 'kmsro', ',kmsro', '', d)}"
@@ -196,8 +194,6 @@ GALLIUMDRIVERS_append = "${@bb.utils.contains('PACKAGECONFIG', 'vc4', ',vc4', ''
 GALLIUMDRIVERS_append = ",virgl"
 GALLIUMDRIVERS_append_intelgpu = "${@bb.utils.contains('PACKAGECONFIG', 'i915', ',i915', '', d)}"
 GALLIUMDRIVERS_append_intelgpu = "${@bb.utils.contains('PACKAGECONFIG', 'iris', ',iris', '', d)}"
-GALLIUMDRIVERS_remove_x86-x32 = "swrast,"
-
 
 PACKAGECONFIG[gallium] = "-Dgallium-drivers=${@strip_comma('${GALLIUMDRIVERS}')}, -Dgallium-drivers=''"
 PACKAGECONFIG[gallium-llvm] = "-Dllvm=true -Dshared-llvm=true, -Dllvm=false, llvm${MESA_LLVM_RELEASE} llvm-native"
@@ -207,12 +203,9 @@ PACKAGECONFIG[va] = "-Dgallium-va=true,-Dgallium-va=false,libva-initial"
 PACKAGECONFIG[vdpau] = "-Dgallium-vdpau=true,-Dgallium-vdpau=false,libvdpau"
 
 OSMESA = "${@bb.utils.contains('PACKAGECONFIG', 'gallium', 'gallium', 'classic', d)}"
-PACKAGECONFIG[osmesa] = "-Dosmesa=${OSMESA},-Dosmesa=none"
+PACKAGECONFIG[osmesa] = "-Dosmesa=${OSMESA},-Dosmesa=false"
 
 PACKAGECONFIG[unwind] = "-Dlibunwind=true,-Dlibunwind=false,libunwind"
-
-# mesa tries to run cross-built gen_matypes on build machine to get struct size information
-EXTRA_OEMESON_append = " -Dasm=false"
 
 # llvmpipe is slow if compiled with -fomit-frame-pointer (e.g. -O2)
 FULL_OPTIMIZATION_append = " -fno-omit-frame-pointer"
