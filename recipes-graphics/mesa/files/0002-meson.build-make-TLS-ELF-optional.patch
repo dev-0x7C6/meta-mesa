@@ -1,61 +1,46 @@
-From 624f430dd0a91344146a2b8d49a69f23560c2fa2 Mon Sep 17 00:00:00 2001
-From: Alistair Francis <alistair@alistair23.me>
-Date: Thu, 14 Nov 2019 13:08:31 -0800
-Subject: [PATCH] meson.build: make TLS ELF optional
+From 64afa93fbbca3efc9f4695e86e46e3c4ff03f4d1 Mon Sep 17 00:00:00 2001
+From: Markus Volk <f_l_k@t-online.de>
+Date: Thu, 20 May 2021 16:19:10 +0200
+Subject: [PATCH] meson: make ELF-TLS optional
 
-USE_ELF_TLS has replaced GLX_USE_TLS so this patch is the original "make
-TLS GLX optional again" patch updated to the latest mesa.
-
-For details, see:
-https://gitlab.freedesktop.org/mesa/mesa/-/issues/966
-
-This prevents runtime segfault on musl:
-
-Traceback (most recent call last):
-  File "/home/pokybuild/yocto-worker/musl-qemux86/build/meta/lib/oeqa/core/decorator/__init__.py", line 36, in wrapped_f
-    return func(*args, **kwargs)
-  File "/home/pokybuild/yocto-worker/musl-qemux86/build/meta/lib/oeqa/runtime/cases/parselogs.py", line 378, in test_parselogs
-    self.assertEqual(errcount, 0, msg=self.msg)
-AssertionError: 1 != 0 : Log: /home/pokybuild/yocto-worker/musl-qemux86/build/build/tmp/work/qemux86-poky-linux-musl/core-image-sato-sdk/1.0-r0/target_logs/Xorg.0.log
------------------------
-Central error: [    10.477] (EE) Failed to load /usr/lib/xorg/modules/extensions/libglx.so: Error relocating /usr/lib/libGL.so.1: alphasort: initial-exec TLS resolves to dynamic definition in /usr/lib/libGL.so.1
-***********************
-
-Upstream-Status: Inappropriate [configuration]
-Signed-off-by: Alistair Francis <alistair@alistair23.me>
-
+Signed-off-by: Markus Volk <f_l_k@t-online.de>
 ---
- meson.build       | 2 +-
- meson_options.txt | 6 ++++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ meson.build       | 3 ++-
+ meson_options.txt | 8 ++++++++
+ 2 files changed, 10 insertions(+), 1 deletions(-)
 
 diff --git a/meson.build b/meson.build
-index efc6171..8450968 100644
+index e1e94e71049..d9f27b5ec76 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -448,7 +448,7 @@ endif
- 
- # Android uses emutls for versions <= P/28. For USE_ELF_TLS we need ELF TLS.
+@@ -449,7 +449,8 @@ endif
  use_elf_tls = false
--if not ['windows', 'freebsd', 'openbsd', 'haiku'].contains(host_machine.system()) and (not with_platform_android or get_option('platform-sdk-version') >= 29)
-+if not ['windows', 'freebsd', 'openbsd', 'haiku'].contains(host_machine.system()) and (not with_platform_android or get_option('platform-sdk-version') >= 29) and get_option('elf-tls')
+ if (not ['freebsd', 'openbsd', 'haiku'].contains(host_machine.system()) and
+     (not with_platform_android or get_option('platform-sdk-version') >= 29) and
+-    (not with_platform_windows or not with_shared_glapi))
++    (not with_platform_windows or not with_shared_glapi) and
++    get_option('elf-tls'))
    pre_args += '-DUSE_ELF_TLS'
    use_elf_tls = true
  endif
 diff --git a/meson_options.txt b/meson_options.txt
-index fc73f6e..d7482c0 100644
+index a7030aba31e..2dfffac3d2a 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
-@@ -420,6 +420,12 @@ option(
+@@ -421,6 +421,14 @@ option(
    value : true,
    description : 'Enable direct rendering in GLX and EGL for DRI',
  )
++
 +option(
 +  'elf-tls',
 +  type : 'boolean',
 +  value : true,
 +  description : 'Enable TLS support in ELF',
 +)
++
  option(
    'prefer-iris',
    type : 'boolean',
+--
+2.25.1

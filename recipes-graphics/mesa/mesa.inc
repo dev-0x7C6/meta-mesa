@@ -10,7 +10,7 @@ HOMEPAGE = "http://mesa3d.org"
 BUGTRACKER = "https://bugs.freedesktop.org"
 SECTION = "x11"
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://docs/license.rst;md5=9aa1bc48c9826ad9fdb16661f6930496"
+LIC_FILES_CHKSUM = "file://docs/license.rst;md5=17a4ea65de7a9ab42437f3131e616a7f"
 
 PE = "2"
 
@@ -41,7 +41,7 @@ SRC_URI = "git://github.com/mesa3d/mesa.git;nobranch=1 \
            file://0001-futex.h-Define-__NR_futex-if-it-does-not-exist.patch \
            "
 
-VERSION = "21.0.3"
+VERSION = "21.1.1"
 SRCREV = "mesa-${VERSION}"
 PV = "${VERSION}+git${SRCPV}"
 S = "${WORKDIR}/git"
