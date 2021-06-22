@@ -41,7 +41,7 @@ SRC_URI = "git://github.com/mesa3d/mesa.git;nobranch=1 \
            file://0001-futex.h-Define-__NR_futex-if-it-does-not-exist.patch \
            "
 
-VERSION = "21.1.2"
+VERSION = "21.1.3"
 SRCREV = "mesa-${VERSION}"
 PV = "${VERSION}+git${SRCPV}"
 S = "${WORKDIR}/git"
